@@ -293,8 +293,9 @@ class jigsaw_dataset(data.Dataset):
         self.num_workers = num_workers
 
         self.transform = transforms.Compose([transforms.Resize(224),
-                                             transforms.ToTensor()])
-
+                                             transforms.ToTensor(),
+                                             transforms.Normalize([0.485,0.456, 0.406],
+                                                                  [0.229,0.224, 0.225])])
 
     def __getitem_for_debugging__(self, index):
 
@@ -365,8 +366,6 @@ class jigsaw_dataset(data.Dataset):
         # return self.transform(centralCrop), self.transform(randomCrop), self.transform(img)
 
         return centralCrop, randomCrop, torch.LongTensor([randomCropPosition])
-
-
 
     def __len__(self):
         return 1000
