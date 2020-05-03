@@ -1,13 +1,13 @@
 import torch
 from torchvision.models.utils import load_state_dict_from_url
 
-from torchvision.models.resnet import  BasicBlock,\
+from torchvision.models.resnet import BasicBlock, \
     Bottleneck, model_urls, ResNet
 
 
 class ResNetFeatureExtraction(ResNet):
 
-    def _forward_impl(self, x):
+    def forward(self, x):
         # See note [TorchScript super()]
         x = self.conv1(x)
         x = self.bn1(x)
@@ -24,19 +24,8 @@ class ResNetFeatureExtraction(ResNet):
         return x
 
     def forward(self, x):
-        return self._forward_impl(x)
+        return self.forward(x)
 
-    def fused_output(self,firstEmb, secondEmb):
-
-        fused_emb = firstEmb + secondEmb
-
-        fused_emb = self.relu(fused_emb)
-
-        fused_emb = torch.flatten(fused_emb, 1)
-
-        fused_emb = self.fc(fused_emb)
-
-        return fused_emb
 
 def _resnet(arch, block, layers, pretrained, progress, **kwargs):
     model = ResNetFeatureExtraction(block, layers, **kwargs)
@@ -57,6 +46,7 @@ def resnet18(pretrained=False, progress=True, **kwargs):
     """
     return _resnet('resnet18', BasicBlock, [2, 2, 2, 2], pretrained, progress,
                    **kwargs)
+
 
 def resnet34(pretrained=False, progress=True, **kwargs):
     r"""ResNet-34 model from
@@ -168,4 +158,4 @@ def wide_resnet101_2(pretrained=False, progress=True, **kwargs):
     kwargs['width_per_group'] = 64 * 2
     return _resnet('wide_resnet101_2', Bottleneck, [3, 4, 23, 3],
                    pretrained, progress, **kwargs)
-    
+

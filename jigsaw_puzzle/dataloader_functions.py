@@ -18,7 +18,7 @@ https://arxiv.org/pdf/1505.05192.pdf
 
 We sample random pairs of patches in one of eight spatial
 configurations, and present each pair to a machine learner,
-providing no information abtout the patches' original 
+providing no information about the patches' original 
 position within the image.
 
 The algorithm must then guess the position of one patch
@@ -81,6 +81,37 @@ scale and shift (gamma and beta), which forces the network activations
 to vary across examples.
 
 """
+
+"""
+JITTER ALGORITHM:
+
+Once we know the size of the image and the magnitude of the jitter, we can proceed
+to stablish the number of jitters. For instance, let us say our tensor is one-dimensional
+
+tensor_size = n
+jitter_size = s
+
+number_of_zones = n/s
+
+zones = []
+
+for i in range(number_of_zones) -1:
+    zones.append()
+    
+
+
+
+"""
+
+
+class jitter(object):
+
+    def __init__(self, magnitude):
+        self.magnitude = magnitude
+
+    def __call__(self, img):
+        # Copied from https://github.com/fastai/fastai/blob/master/fastai/vision/transform.py
+        return img.flow.add_((torch.rand_like(img.flow)-0.5)*self.magnitude*2)
 
 def estimate_crop_position(p_crop_number,p_initialJigsawXPosition, p_initialJigsawYPosition,
                            x_c, y_c, d_c):
