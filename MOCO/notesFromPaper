@@ -1,0 +1,28 @@
+Language tasks have discrete signal spaces (words, sub-word units, etc.) for
+building tokenized dictionaries, on which unsupervised learning can be
+based. Computer vision, in contrast, further concerns dictionary buildings, as
+the raw signal is in a continuous, high-dimensional space and is not sructured
+for human communication (e.g., unlike words).
+
+Contrastive loss methds can be thought of as building dynamic dictionaries.
+The "keys" (tokens) in the dictionary are sampled from data (e.g., images
+or patches) and are represented by an encoder network.
+
+Unsupervised learning trains encoders to perform dictinary look-up: an
+encoded "query" should be similar to its matching key and dissimilar to others.
+Learning is formulate as minimizing a contrastive loss.
+
+We present Momentum Contrast (MoCo) as a way of building large and consistent
+dictionaries for unsupervised learning with a contrastive loss. We maintain
+the dictionary as a queue of data samples: the encoded representations of
+the current mini-batch are enqueued, and the oldest are dequeued.
+The queue decouples the dictionary size from the mini-batch size, allowing
+it to be large. Moreover, as the dictionary keys come from the preceeding
+several mini-batches, a slowly progressing key encoder, implemented as a
+momentum-based moving average of the query encoder, is proposed to
+maintain consistency.
+
+In this paper, we follow a simple instance discrimination task: a query matches
+a key if they are encoded views (e.g., different crops) of the same image.
+
+

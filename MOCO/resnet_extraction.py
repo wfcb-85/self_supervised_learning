@@ -6,7 +6,7 @@ from torchvision.models.resnet import BasicBlock, \
 
 
 class ResNetFeatureExtraction(ResNet):
-    
+
     def _forward_impl(self, x):
         # See note [TorchScript super()]
         x = self.conv1(x)
@@ -25,9 +25,6 @@ class ResNetFeatureExtraction(ResNet):
 
     def forward(self, x):
         return self._forward_impl(x)
-
-
-
 
 def _resnet(arch, block, layers, pretrained, progress, **kwargs):
     model = ResNetFeatureExtraction(block, layers, **kwargs)
@@ -160,3 +157,4 @@ def wide_resnet101_2(pretrained=False, progress=True, **kwargs):
     kwargs['width_per_group'] = 64 * 2
     return _resnet('wide_resnet101_2', Bottleneck, [3, 4, 23, 3],
                    pretrained, progress, **kwargs)
+

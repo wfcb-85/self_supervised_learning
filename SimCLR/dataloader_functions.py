@@ -1,20 +1,9 @@
 import torch
 import torch.utils.data as data
 import torchvision
-# import torchnet as tnt
-import torchvision.datasets as datasets
 import torchvision.transforms as transforms
-
-from torch.utils.data.dataloader import default_collate
-
-import numpy as np
-import random
-
-from PIL import Image
-
-import torchnet as tnt
-
 import torchvision.transforms.functional as TF
+import random
 
 # From https://arxiv.org/pdf/2002.05709.pdf
 # In this work, we sequentially apply three simple augmentations:
@@ -91,6 +80,73 @@ class simclrDataset(data.Dataset):
 
         return first_transform.reshape(img_shape[1],img_shape[2],img_shape[3]), \
                second_transform.reshape(img_shape[1],img_shape[2],img_shape[3])
+
+    def __len__(self):
+        return int(( len(self.dataset) / 4)/ self.batch_size )
+
+
+def rotation_transform(image, angle):
+
+    r_image = TF.rotate(image, angle)
+
+    return r_image
+
+class rotationSiMCLR(data.Dataset):
+
+    def __init__(self, dataset, shuffle,  batch_size, num_workers):
+
+        self.dataset = dataset
+        self.shuffle = shuffle
+        self.batch_size = batch_size
+        self.num_workers = num_workers
+
+        self.transform = transforms.Compose([
+            transforms.Resize((256,256)),
+            transforms.ToTensor()
+        ])
+
+        self.resize_pil_image = transforms.Compose([
+            transforms.Resize((256, 256))
+            # transforms.ToPILImage()
+        ])
+
+    def __getitem__(self, index):
+
+        idx = index % len(self.dataset)
+
+        img, _ = self.dataset[idx]
+
+        rotation = int(random.random() * 4)
+
+        # if rotation == 0:
+
+
+
+        rotated_imgs = [
+            self.transform(img),
+
+            # What we do here is to first resize the image for it to be square. Otherwise, there would
+            # be some visible borders when the rotation is performed.
+
+            torchvision.transforms.ToTensor()(rotation_transform(self.resize_pil_image(img), 90)),
+            self.transform(rotation_transform(img, 180)),
+            torchvision.transforms.ToTensor()(rotation_transform(self.resize_pil_image(img), 270))
+        ]
+        rotation_labels = torch.LongTensor([0, 1, 2, 3])
+
+        # print(rotated_imgs)
+        # print(rotation_labels)
+
+        return torch.stack(rotated_imgs, dim=0), rotation_labels
+
+    # def _collate_fun(batch):
+    #
+    #     batch = default_collate(batch)
+    #     assert(len(batch)==2)
+    #     batch_size, rotations, channels, height, width = batch[0].size()
+    #     batch[0] = batch[0].view([batch_size * rotations, channels, height, width])
+    #     batch[1] = batch[1].view([batch_size, rotations])
+    #     return batch
 
     def __len__(self):
         return int(( len(self.dataset) / 4)/ self.batch_size )
