@@ -79,6 +79,8 @@ elif resnetArchitecture == 152:
 resnetModelQuery.to(device)
 resnetModelKey.to(device)
 
+temperature = 1.0
+
 criterion = nn.CrossEntropyLoss()
 
 
@@ -91,7 +93,6 @@ optimizer_ft = optim.SGD(list(resnetModelQuery.parameters()),
 exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)
 
 model_ft = train_model(resnetModelQuery, resnetModelKey, dictionarySize, output_size, batch_size,
- dataloader_object, dataset_sizes,
-                       criterion,
+ dataloader_object, dataset_sizes, temperature, criterion,
                        optimizer_ft, exp_lr_scheduler,
                        device,num_epochs=1000,  model_name="myMpdem")

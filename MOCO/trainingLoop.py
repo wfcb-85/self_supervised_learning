@@ -7,7 +7,7 @@ logging.basicConfig(filename="./trainingLogging.log", level=logging.DEBUG)
 
 
 def train_model(queryModel, keyModel, dictionarySize, output_size, batch_size,
-    dataloader,  dataset_sizes, criterion, optimizer, scheduler, device,
+    dataloader,  dataset_sizes, temperature, criterion, optimizer, scheduler, device,
                 num_epochs=25, model_name = "Alexnet"):
 
     since = time.time()
@@ -71,7 +71,8 @@ def train_model(queryModel, keyModel, dictionarySize, output_size, batch_size,
                     logging.info("dictionary Second Version")
                     logging.info(dictionaryQueue)
 
-                    loss = mocoLossFunction(query_extract, key_extract, dictionaryQueue)
+                    loss = mocoLossFunction(query_extract, key_extract, 
+                        dictionaryQueue, temperature, criterion)
 
                     logging.info("loss ", loss)
 

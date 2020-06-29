@@ -42,7 +42,7 @@ def simCLRLossFunction(hidden1, hidden2, criterion):
 
     return totalLoss
 
-def mocoLossFunction(query, key, dictionaryQueue):
+def mocoLossFunction(query, key, dictionaryQueue, temperature, criterion):
 
     print("query shape " ,query.shape)
     print("key shape ",key.shape)
@@ -56,8 +56,23 @@ def mocoLossFunction(query, key, dictionaryQueue):
 
     print("logits negative shape ", logitsNegative.shape)
 
-    logits = torch.cat([logitsPositive, logitsNegative], 1)
-    labels = torch.tensor()
+    logits = torch.cat([logitsPositive, logitsNegative], 1).cuda()
+
+    
+    labels = torch.zeros(logits.shape[0], dtype=torch.long).cuda()
+
+    print("logits shape ", logits.shape)
+
+    print("labels ", labels)
+
+
+    print("alternative labels ", torch.tensor(range(0, logits.shape[0])))
+
+    #criterion = nn.CrossEntropyLoss()
+
+    loss = criterion(logits / temperature, labels)
+
+    print("loss ", loss)
     
 
-    return []
+    return loss
